@@ -480,7 +480,19 @@ func (c *Cluster) createPod(members etcdutil.MemberSet, m *etcdutil.Member, stat
 	if needRecovery {
 		k8sutil.AddRecoveryToPod(pod, c.cluster.Name, token, m, c.cluster.Spec)
 	}
-	_, err := c.config.KubeCli.Core().Pods(c.cluster.Namespace).Create(pod)
+
+	err := k8sutil.CreateDataStorageClass(c.config.KubeCli, c.config.PVProvisioner)
+	if err != nil {
+		if !k8sutil.IsKubernetesResourceAlreadyExistError(err) {
+			return err
+		}
+	}
+
+	err = k8sutil.CreateAndWaitDataPVC(c.config.KubeCli, c.cluster.Name, c.cluster.Namespace, c.config.PVProvisioner, m.ID, 4096)
+	if err != nil {
+		return err
+	}
+	_, err = c.config.KubeCli.Core().Pods(c.cluster.Namespace).Create(pod)
 	return err
 }
 

@@ -42,6 +42,7 @@ var (
 		constants.PVProvisionerGCEPD:  {},
 		constants.PVProvisionerAWSEBS: {},
 		constants.PVProvisionerNone:   {},
+		constants.PVProvisionerNFS:    {},
 	}
 
 	ErrVersionOutdated = errors.New("requested version is outdated in apiserver")

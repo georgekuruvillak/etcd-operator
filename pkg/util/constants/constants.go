@@ -29,5 +29,6 @@ const (
 
 	PVProvisionerGCEPD  = "kubernetes.io/gce-pd"
 	PVProvisionerAWSEBS = "kubernetes.io/aws-ebs"
+	PVProvisionerNFS    = "sap.com/nfs-client"
 	PVProvisionerNone   = "none"
 )

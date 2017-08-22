@@ -251,9 +251,20 @@ func NewEtcdPod(m *etcdutil.Member, initialCluster []string, clusterName, state,
 		container = containerWithRequirements(container, cs.Pod.Resources)
 	}
 
-	volumes := []v1.Volume{
-		{Name: "etcd-data", VolumeSource: v1.VolumeSource{EmptyDir: &v1.EmptyDirVolumeSource{}}},
-	}
+	/*
+		volumes := []v1.Volume{
+			{Name: "etcd-data", VolumeSource: v1.VolumeSource{EmptyDir: &v1.EmptyDirVolumeSource{}}},
+		}
+	*/
+
+	volumes := []v1.Volume{{
+		Name: "etcd-data",
+		VolumeSource: v1.VolumeSource{
+			PersistentVolumeClaim: &v1.PersistentVolumeClaimVolumeSource{
+				ClaimName: makeDataPVCName(clusterName, m.ID),
+			},
+		},
+	}}
 
 	if m.SecurePeer {
 		container.VolumeMounts = append(container.VolumeMounts, v1.VolumeMount{
