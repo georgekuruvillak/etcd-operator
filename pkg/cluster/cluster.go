@@ -492,6 +492,8 @@ func (c *Cluster) createPod(members etcdutil.MemberSet, m *etcdutil.Member, stat
 	if err != nil {
 		return err
 	}
+
+	c.logger.Info("creating pod with memberId: %d", m.ID)
 	_, err = c.config.KubeCli.Core().Pods(c.cluster.Namespace).Create(pod)
 	return err
 }

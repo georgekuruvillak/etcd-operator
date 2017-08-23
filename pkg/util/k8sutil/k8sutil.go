@@ -91,7 +91,7 @@ func makeRestoreInitContainerSpec(backupAddr, token, baseImage, version string, 
 			Image: ImageName(baseImage, version),
 			Command: []string{
 				"/bin/sh", "-ec",
-				fmt.Sprintf("ETCDCTL_API=3 etcdctl snapshot restore %[1]s"+
+				fmt.Sprintf("rm -rf %[5]s; ETCDCTL_API=3 etcdctl snapshot restore %[1]s"+
 					" --name %[2]s"+
 					" --initial-cluster %[2]s=%[3]s"+
 					" --initial-cluster-token %[4]s"+

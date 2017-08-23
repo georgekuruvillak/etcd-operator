@@ -57,16 +57,7 @@ func CreateAndWaitDataPVC(kubecli kubernetes.Interface, clusterName, ns, pvProvi
 	}
 	_, err := kubecli.CoreV1().PersistentVolumeClaims(ns).Create(claim)
 	if err != nil {
-		if IsKubernetesResourceAlreadyExistError(err) {
-			err = kubecli.CoreV1().PersistentVolumeClaims(ns).Delete(name, nil)
-			if !IsKubernetesResourceNotFoundError(err) {
-				return err
-			}
-			_, err = kubecli.CoreV1().PersistentVolumeClaims(ns).Create(claim)
-			if IsKubernetesResourceAlreadyExistError(err) {
-				return err
-			}
-		} else {
+		if !IsKubernetesResourceAlreadyExistError(err) {
 			return err
 		}
 	}
