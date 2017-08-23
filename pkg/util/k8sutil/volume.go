@@ -57,7 +57,18 @@ func CreateAndWaitDataPVC(kubecli kubernetes.Interface, clusterName, ns, pvProvi
 	}
 	_, err := kubecli.CoreV1().PersistentVolumeClaims(ns).Create(claim)
 	if err != nil {
-		return err
+		if IsKubernetesResourceAlreadyExistError(err) {
+			err = kubecli.CoreV1().PersistentVolumeClaims(ns).Delete(name, nil)
+			if !IsKubernetesResourceNotFoundError(err) {
+				return err
+			}
+			_, err = kubecli.CoreV1().PersistentVolumeClaims(ns).Create(claim)
+			if IsKubernetesResourceAlreadyExistError(err) {
+				return err
+			}
+		} else {
+			return err
+		}
 	}
 
 	// TODO: We set timeout to 60s here since PVC binding could take up to 60s for GCE/PD. See https://github.com/kubernetes/kubernetes/issues/40972 .
